@@ -384,12 +384,22 @@ for (key, value) in sortedBreeds {
 
 print("===== final list =====")
 
+//for (mainBreed, value) in sortedBreeds {
+//    if value.isEmpty {
+//        print(mainBreed)
+//    } else {
+//        for subBreed in value {
+//            print("\(mainBreed)/\(subBreed)")
+//        }
+//    }
+//}
+
 for (mainBreed, value) in sortedBreeds {
     if value.isEmpty {
-        print(mainBreed)
+        print("\(mainBreed)\t\(mainBreed.capitalized)")
     } else {
         for subBreed in value {
-            print("\(mainBreed)/\(subBreed)")
+            print("\(mainBreed)/\(subBreed)\t\(subBreed.capitalized) \(mainBreed.capitalized)")
         }
     }
 }

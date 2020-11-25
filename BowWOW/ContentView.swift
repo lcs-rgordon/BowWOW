@@ -10,39 +10,90 @@
 
 import SwiftUI
 
+enum FetchType {
+    case random
+    case specific
+}
+
 struct ContentView: View {
     
     @State private var dogImage = UIImage()
     
+    @State private var breeds: [Breed] = []
+    @State private var selectedBreed = 0
+    
     var body: some View {
         NavigationView {
             VStack {
-                Image(uiImage: dogImage)
-                    .resizable()
-                    .scaledToFit()
-                    .padding()
-                
-                Button(action: {
-                    fetchMoreCuteness()
-                }, label: {
-                    Text("More, please!")
-                })
-                
-                Spacer()
+
+                Form {
+                    
+                    Section {
+                        
+                        Picker("Breed", selection: $selectedBreed) {
+                            List(breeds) { breed in
+                                Text(breed.name)
+                            }
+                        }
+                        
+                    }
+                    
+                    Section {
+                        
+                        Button(action: {
+                            fetchMoreCuteness(breed: .specific)
+                        }, label: {
+                            Text("Fetch selected breed")
+                        })
+                        // Centre the button
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                        
+                    }
+
+                    Section {
+                        
+                        Button(action: {
+                            fetchMoreCuteness(breed: .random)
+                        }, label: {
+                            Text("Surprise me")
+                        })
+                        // Centre the button
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                        
+                    }
+
+                    Image(uiImage: dogImage)
+                        .resizable()
+                        .scaledToFit()
+                        .padding()
+                    
+                }
+                .edgesIgnoringSafeArea(.bottom)
             }
             .navigationTitle("Bow WOW!")
         }
         .onAppear() {
             fetchMoreCuteness()
+            fetchBreeds()
         }
     }
     
     // Get a random pooch pic!
-    func fetchMoreCuteness() {
+    func fetchMoreCuteness(breed: FetchType = .random) {
         
         // 1. Prepare a URLRequest to send our encoded data as JSON
-        let url = URL(string: "https://dog.ceo/api/breeds/image/random")!
-        var request = URLRequest(url: url)
+        var url = URL(string: "")
+        if breed == .random {
+            // Random dog pic endpoint
+            url = URL(string: "https://dog.ceo/api/breeds/image/random")!
+        } else {
+            // Accounts for fact that arrays are zero based and selectedBreed gets set to whatever the id is for the selected item
+            // The first breed in the list returned from the spreadsheet had an id of 2
+            // So, we subtract 2 from the selectedBreed value
+            url = URL(string: "https://dog.ceo/api/breed/\(breeds[selectedBreed - 2].slug)/images/random")!
+            
+        }
+        var request = URLRequest(url: url!)
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "GET"
         
@@ -116,7 +167,53 @@ struct ContentView: View {
         }.resume()
         
     }
+
+    // Get the list of breeds
+    func fetchBreeds() {
         
+        // 1. Prepare a URLRequest to retrieve our encoded data as JSON
+        let url = URL(string: "https://api.sheety.co/92d7eb80d996eaeb34616393ebc6ddcf/dogBreeds/list")!
+        var request = URLRequest(url: url)
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpMethod = "GET"
+
+        // 2. Run the request and process the response
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            
+            // Attempt to unwrap the optional data that is returned
+            guard let breedsData = data else {
+                
+                print("No data in response: \(error?.localizedDescription ?? "Unknown error")")
+                return
+                
+            }
+            
+            // It seems to have worked? Let's see what we have
+            print(String(data: breedsData, encoding: .utf8)!)
+            
+            // Now decode from JSON into an array of breeds
+            if let decodedBreedsList = try? JSONDecoder().decode(BreedsSummary.self, from: breedsData) {
+                
+                print("Breeds list decoded from JSON successfully.")
+                
+                // Update the UI on the main thread
+                DispatchQueue.main.async {
+                    
+                    // Set the list of breeds
+                    breeds = decodedBreedsList.list
+                    
+                    // Set the selected breed
+                    selectedBreed = -1  // No breed will be selected at first
+                    
+                }
+                
+            }
+
+        }.resume()
+        
+    }
+    
+
 }
 
 struct ContentView_Previews: PreviewProvider {
