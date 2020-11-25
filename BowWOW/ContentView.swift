@@ -21,6 +21,13 @@ struct ContentView: View {
                     .resizable()
                     .scaledToFit()
                     .padding()
+                
+                Button(action: {
+                    fetchMoreCuteness()
+                }, label: {
+                    Text("More, please!")
+                })
+                
                 Spacer()
             }
             .navigationTitle("Bow WOW")
