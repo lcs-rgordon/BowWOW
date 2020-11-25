@@ -51,12 +51,28 @@ struct ContentView: View {
             
             // It seems to have worked? Let's see what we have
             print(String(data: doggieData, encoding: .utf8)!)
-                        
+            
+            // Now decode from JSON into an array of Swift native data types
+            if let decodedDoggieData = try? JSONDecoder().decode(RandomDog.self, from: doggieData) {
+
+                print("Doggie data decoded from JSON successfully")
+                print("URL is: \(decodedDoggieData.message)")
+
+            } else {
+
+                print("Invalid response from server.")
+            }
+            
         }.resume()
 
         
     }
         
+}
+
+struct RandomDog: Codable {
+    var message: String
+    var status: String
 }
 
 struct ContentView_Previews: PreviewProvider {
