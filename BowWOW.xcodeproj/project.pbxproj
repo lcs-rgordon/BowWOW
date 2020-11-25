@@ -16,6 +16,7 @@
 
 /* Begin PBXFileReference section */
 		0E301F83256DEEF80026C0A1 /* RandomDog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomDog.swift; sourceTree = "<group>"; };
+		0E301F8B256E99CD0026C0A1 /* DecodingBreedsList.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = DecodingBreedsList.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		0EFA6265256DE1B000B9137C /* BowWOW.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BowWOW.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0EFA6268256DE1B000B9137C /* BowWOWApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BowWOWApp.swift; sourceTree = "<group>"; };
 		0EFA626A256DE1B000B9137C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -60,6 +61,7 @@
 				0EFA626C256DE1B400B9137C /* Assets.xcassets */,
 				0EFA6271256DE1B400B9137C /* Info.plist */,
 				0EFA626E256DE1B400B9137C /* Preview Content */,
+				0E301F8B256E99CD0026C0A1 /* DecodingBreedsList.playground */,
 			);
 			path = BowWOW;
 			sourceTree = "<group>";
