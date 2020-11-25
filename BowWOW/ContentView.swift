@@ -30,7 +30,7 @@ struct ContentView: View {
                 
                 Spacer()
             }
-            .navigationTitle("Bow WOW")
+            .navigationTitle("Bow WOW!")
         }
         .onAppear() {
             fetchMoreCuteness()
