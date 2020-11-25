@@ -12,10 +12,12 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @State private var dogImage = UIImage()
+    
     var body: some View {
         NavigationView {
             VStack {
-                Image("example")
+                Image(uiImage: dogImage)
                     .resizable()
                     .scaledToFit()
                     .padding()
@@ -57,6 +59,9 @@ struct ContentView: View {
 
                 print("Doggie data decoded from JSON successfully")
                 print("URL is: \(decodedDoggieData.message)")
+                
+                // Now fetch the image at the address we were given
+                fetchImage(from: decodedDoggieData.message)
 
             } else {
 
@@ -64,15 +69,47 @@ struct ContentView: View {
             }
             
         }.resume()
+        
+    }
+    
+    // Get the actual image data
+    func fetchImage(from address: String) {
 
+        // 1. Prepare a URLRequest to send our encoded data as JSON
+        let url = URL(string: address)!
+        
+        // 2. Run the request and process the response
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            
+            // handle the result here – attempt to unwrap optional data provided by task
+            guard let imageData = data else {
+                
+                // Show the error message
+                print("No data in response: \(error?.localizedDescription ?? "Unknown error")")
+                
+                return
+            }
+            
+            // Update the UI on the main thread
+            DispatchQueue.main.async {
+                                    
+                // Attempt to create an instance of UIImage using the data from the server
+                guard let loadedDog = UIImage(data: imageData) else {
+                    
+                    // If we could not load the image from the server, show a default image
+                    dogImage = UIImage(named: "example")!
+                    return
+                }
+                
+                // Set the image loaded from the server so that it shows in the user interface
+                dogImage = loadedDog
+                
+            }
+            
+        }.resume()
         
     }
         
-}
-
-struct RandomDog: Codable {
-    var message: String
-    var status: String
 }
 
 struct ContentView_Previews: PreviewProvider {
